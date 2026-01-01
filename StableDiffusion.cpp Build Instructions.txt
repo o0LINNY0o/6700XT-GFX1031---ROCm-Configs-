@@ -1,0 +1,45 @@
+REM --- 1. CLONE REPOSITORY ---
+REM We use --recursive because sd.cpp has critical submodules
+    git clone --recursive https://github.com/leejet/stable-diffusion.cpp
+    cd stable-diffusion.cpp
+
+REM --- 2. INITIALIZE VISUAL STUDIO ---
+call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+
+REM --- 3. SET PATHS (Based on your working llama.cpp setup) ---
+set PATH=%PATH%;C:\Program Files\Git\usr\bin
+
+REM --- 4. DEFINE COMPILER & ROCM PATHS ---
+REM Using the paths you verified exist in C:\AMD\ROCm\7.2
+set CC=C:\AMD\ROCm\7.2\lib\llvm\bin\clang.exe
+set CXX=C:\AMD\ROCm\7.2\lib\llvm\bin\clang++.exe
+set HIP_PATH=C:\AMD\ROCm\7.2
+set ROCM_PATH=C:\AMD\ROCm\7.2
+set HIP_PLATFORM=amd
+
+REM --- 5. THE FIX: BITCODE PATHS ---
+REM This is the "magic sauce" that fixed your llama.cpp build
+set HIP_DEVICE_LIB_PATH=C:\AMD\ROCm\7.2\lib\llvm\amdgcn\bitcode
+
+REM --- 6. CLEAN PREVIOUS BUILD ---
+if exist build rmdir /s /q build
+mkdir build
+
+REM --- 7. CONFIGURE CMAKE ---
+REM Changed -DGGML_HIP=ON to -DSD_HIPBLAS=ON
+REM Kept your forced bitcode flags and gfx1031 target
+cmake -B build -G "Ninja" ^
+    -DSD_HIPBLAS=ON ^
+    -DAMDGPU_TARGETS=gfx1031 ^
+    -DCMAKE_C_COMPILER="%CC%" ^
+    -DCMAKE_CXX_COMPILER="%CXX%" ^
+    -DCMAKE_PREFIX_PATH="C:\AMD\ROCm\7.2" ^
+    -DCMAKE_BUILD_TYPE=Release ^
+    -DHIP_PLATFORM=amd ^
+    -DCMAKE_HIP_FLAGS="--rocm-device-lib-path=C:/AMD/ROCm/7.2/lib/llvm/amdgcn/bitcode"
+
+REM --- 8. COMPILE ---
+cmake --build build --config Release
+
+REM --- 9. ADD 6.4.2 ROCBlas to directory --
+https://github.com/likelovewant/ROCmLibs-for-gfx1103-AMD780M-APU/releases add rocm.gfx1031.for.hip.6.4.2.7z files to the ./ROCBlas/ directory
