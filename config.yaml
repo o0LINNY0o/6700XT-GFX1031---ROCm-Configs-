@@ -1,0 +1,27 @@
+# llama-swap configuration file (Optimized for RX 6700 XT 12GB)
+
+models:
+  # Vision model - GLM-4.6V 
+  glm-4.6v:
+    cmd: C:\llamaROCM\llama-server.exe --port ${PORT} --model C:\llamaROCM\models\GLM-4.6V-Flash-UD-Q6_K_XL.gguf --mmproj C:\llamaROCM\models\mmproj\GLM_mmproj-F16.gguf --temp 0.8 --top-k 20 --top-p 0.6 --repeat-penalty 1.1 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --threads -1 --gpu-layers -1 -c 16384 --context-shift --keep 512 --sleep-idle-seconds 300
+    aliases: ["glm-vision", "vision-model"]
+
+  # Ministral 3B Instruct 
+  ministral-3b-Instruct:
+    cmd: C:\llamaROCM\llama-server.exe --port ${PORT} --model C:\llamaROCM\models\Ministral-3-3B-Instruct-2512-UD-Q6_K_XL.gguf --flash-attn on --cache-type-k f16 --cache-type-v f16 --threads -1 --gpu-layers -1 -c 32768 --context-shift --keep 512 --sleep-idle-seconds 300
+    aliases: ["Ministral3b"]
+
+  # Ministral 8B Reasoning (vision)
+  ministral-8b-Reasoning:
+    cmd: C:\llamaROCM\llama-server.exe --port ${PORT} --model C:\llamaROCM\models\Ministral-3-8B-Reasoning-2512-UD-Q6_K_XL.gguf --mmproj C:\llamaROCM\models\mmproj\Ministral_mmproj-F16.gguf --temp 0.7 --top-k 40 --top-p 0.95 --min-p 0.01 --repeat-penalty 1.1 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --threads -1 --gpu-layers -1 -c 16384 --context-shift --keep 512 --sleep-idle-seconds 300
+    aliases: ["Ministral8b"]
+
+  # Ministral 14B Instruct (vision)
+  ministral-14b-Instruct:
+    cmd: C:\llamaROCM\llama-server.exe --port ${PORT} --model C:\llamaROCM\models\Ministral-3-14B-Instruct-2512-UD-Q5_K_XL.gguf --mmproj C:\llamaROCM\models\mmproj\Ministral14_mmproj-F16.gguf --temp 0.9 --top-k 40 --top-p 0.95 --min-p 0.05 --repeat-penalty 1.1 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --threads -1 --gpu-layers -1 -c 8192 --context-shift --keep 512 --sleep-idle-seconds 300
+    aliases: ["Ministral14b"]
+
+  # LLama-3.3 8B Instruct Q6
+  llama-3.3-8b-Instruct_Q6:
+    cmd: C:\llamaROCM\llama-server.exe --port ${PORT} --model C:\llamaROCM\models\Llama-3.3-8B-Instruct-Q6_K_L.gguf --temp 0.7 --top-k 40 --top-p 0.95 --min-p 0.01 --repeat-penalty 1.1 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --threads -1 --gpu-layers -1 -c 16384 --context-shift --keep 512 --sleep-idle-seconds 300
+    aliases: ["llama3.3-8b-Instruct_Q6"]
